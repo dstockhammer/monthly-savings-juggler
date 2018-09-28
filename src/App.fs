@@ -1,10 +1,5 @@
 module App
 
-(**
- The famous Increment/Decrement ported from Elm.
- You can find more info about Emish architecture and samples at https://elmish.github.io/
-*)
-
 open Elmish
 open Elmish.React
 open Fable.Helpers.React
@@ -12,31 +7,36 @@ open Fable.Helpers.React.Props
 
 // MODEL
 
-type Model = int
+type Account =
+  { name: string
+    monthlyAllowance: decimal
+    interest: decimal }
+
+type Model =
+  { monthlyBudget: decimal }
 
 type Msg =
-| Increment
-| Decrement
+  | ChangeMonthlyBudget of decimal
 
-let init() : Model = 0
 
-// UPDATE
+// STATE
+
+let init() =
+  { monthlyBudget = 0m }
 
 let update (msg:Msg) (model:Model) =
-    match msg with
-    | Increment -> model + 1
-    | Decrement -> model - 1
+  match msg with
+  | ChangeMonthlyBudget x -> { model with monthlyBudget = x }
 
 // VIEW (rendered with React)
 
 let view (model:Model) dispatch =
-
   div []
-      [ button [ OnClick (fun _ -> dispatch Increment) ] [ str "+" ]
-        div [] [ str (string model) ]
-        button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ] ]
+    [ input [ OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ]
+      div [] [ str (string model) ] ]
 
-// App
+
+// APP
 Program.mkSimple init update view
 |> Program.withReact "elmish-app"
 |> Program.withConsoleTrace
