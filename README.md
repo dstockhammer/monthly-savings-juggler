@@ -16,6 +16,9 @@ This is a simple Fable 2 app including an [Elmish](https://elmish.github.io/) co
 
 Any modification you do to the F# code will be reflected in the web page after saving.
 
+## Building for prod
+* In `src` directory: `dotnet fable webpack-cli`
+
 ## Project structure
 
 ### npm
