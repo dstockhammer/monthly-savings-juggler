@@ -6,6 +6,7 @@ open Fable.Core.JsInterop
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fulma
+open Fulma.Extensions
 
 open App.Domain
 open App.Accounts
@@ -27,14 +28,17 @@ type Msg =
 
 // STATE
 
+let maxInvestment =
+  AvailableAccounts.List
+  |> Seq.fold (fun sum a -> sum + (snd a.monthlyAllowance)) 0m
+
 let init() =
-  let maxInvestment = AvailableAccounts.List |> Seq.fold (fun sum a -> sum + (snd a.monthlyAllowance)) 0m
   { monthlyBudget = 0m
     uninvestedBudget = 0m
     accounts = Seq.empty
     stats = Stats12Mo.zero
     totalAer = 0m },
-  Cmd.ofMsg (ChangeMonthlyBudget maxInvestment)
+  Cmd.ofMsg (ChangeMonthlyBudget (maxInvestment / 2m))
 
 let update (msg:Msg) (model:Model) =
   match msg with
@@ -54,6 +58,7 @@ let update (msg:Msg) (model:Model) =
 let fmtCurrency value : string =
   value?toLocaleString$("en-GB", createObj [ "style" ==> "currency"; "currency" ==> "GBP"; "maximumFractionDigits" ==> 2 ])
 
+
 let view (model:Model) dispatch =
   div []
     [
@@ -69,13 +74,18 @@ let view (model:Model) dispatch =
       Section.section []
         [ Container.container [ Container.IsFluid ]
             [ Heading.h3 [] [ str "Monthly Budget" ]
-              p []
+              div []
                 [ str "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                       Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus
                       , nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio
                       , sollicitudin vel erat vel, interdum mattis neque." ]
-              p []
-                [ input [ OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
+              div []
+                [ Slider.slider [ Slider.IsFullWidth
+                                  Slider.Step 1.0
+                                  Slider.Min 1.0
+                                  Slider.Max (float maxInvestment)
+                                  Slider.DefaultValue (float model.monthlyBudget)
+                                  Slider.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
             ]
         ]
 
