@@ -9,8 +9,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Core" Version="2.0.0" />
+    <PackageReference Include="Fable.PowerPack" Version="2.0.0-beta-004" />
     <PackageReference Include="Fable.React" Version="4.0.0-alpha-001" />
     <PackageReference Include="Fable.Elmish.React" Version="2.0.0-beta-4" />
+    <PackageReference Include="Fulma" Version="1.0.0-beta-026" />
+    <PackageReference Include="Fulma.Extensions" Version="1.0.0-beta-016" />
+    <PackageReference Include="Fulma.Elmish" Version="0.1.0-beta-011" />
+    <PackageReference Include="Thoth.Json" Version="2.0.0-beta-005" />
     <DotNetCliToolReference Include="dotnet-fable" Version="2.0.0" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-public/bundle.js*
+dist/
 
 # Node
 node_modules/

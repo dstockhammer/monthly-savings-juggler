@@ -1,10 +1,11 @@
-module App
+module App.View
 
 open Elmish
 open Elmish.React
 open Fable.Core.JsInterop
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open Fulma
 
 open App.Domain
 open App.Accounts
@@ -37,7 +38,7 @@ let init() =
 
 let update (msg:Msg) (model:Model) =
   match msg with
-  | ChangeMonthlyBudget x -> { model with monthlyBudget = x }, Cmd.ofMsg PickAccounts
+  | ChangeMonthlyBudget monthlyBudget -> { model with monthlyBudget = monthlyBudget }, Cmd.ofMsg PickAccounts
   | PickAccounts ->
     let selectedAccounts, uninvestedBudget = pickAccounts AvailableAccounts.List model.monthlyBudget
     { model with uninvestedBudget = uninvestedBudget }, Cmd.ofMsg (CalculateStats selectedAccounts)
@@ -54,39 +55,74 @@ let fmtCurrency value : string =
   value?toLocaleString$("en-GB", createObj [ "style" ==> "currency"; "currency" ==> "GBP"; "maximumFractionDigits" ==> 2 ])
 
 let view (model:Model) dispatch =
-  div
-    []
-    [ div
-        []
-        [ input [ OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
-      div
-        []
-        [
-          p [] [ str (sprintf "Monthly budget: %s" (fmtCurrency model.monthlyBudget)) ]
-          p [] [ str (sprintf "Uninvested budget: %s" (fmtCurrency model.uninvestedBudget)) ]
-          p [] [ str (sprintf "Investment after 12 months: %s" (fmtCurrency model.stats.totalInvestment)) ]
-          p [] [ str (sprintf "Balance after 12 months: %s" (fmtCurrency model.stats.totalBalance)) ]
-          p [] [ str (sprintf "Interest paid after 12 months:%s" (fmtCurrency model.stats.interestPaid)) ]
-          p [] [ str (sprintf "Total AER %.2f%%" (model.totalAer * 100m)) ]
-          ul
-            []
-            [ for account in model.accounts ->
-              li
+  div []
+    [
+      Hero.hero [ Hero.Color IsPrimary ]
+        [ Hero.body []
+            [ Container.container
+                [ Container.Modifiers [ Modifier.TextAlignment(Screen.All, TextAlignment.Centered) ] ]
+                [ Heading.h1 []
+                    [ str "Monthly Savings Juggler" ]
+                  Heading.h2 [ Heading.IsSubtitle ]
+                    [ str "Subtitle" ] ] ] ]
+
+      Section.section []
+        [ Container.container [ Container.IsFluid ]
+            [ Heading.h3 [] [ str "Monthly Budget" ]
+              p []
+                [ str "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus
+                      , nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio
+                      , sollicitudin vel erat vel, interdum mattis neque." ]
+              p []
+                [ input [ OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
+            ]
+        ]
+
+      Section.section []
+        [ Container.container [ Container.IsFluid ]
+            [ Heading.h3 [] [ str "Savings Accounts" ]
+              dl
                 []
-                [ h3 [] [ str (sprintf "%s: %s (AER %.2f%%)" account.account.bank account.account.name (account.account.aer * 100m)) ]
-                  p [] [ str (sprintf "Monthly investment: %s (of %s allowance)" (fmtCurrency account.monthlyInvestment) (fmtCurrency (snd account.account.monthlyAllowance))) ]
-                  p [] [ str (sprintf "Investment after 12 months: %s" (fmtCurrency account.stats.totalInvestment)) ]
-                  p [] [ str (sprintf "Balance after 12 months: %s" (fmtCurrency account.stats.totalBalance)) ]
-                  p [] [ str (sprintf "Interest paid after 12 months: %s" (fmtCurrency account.stats.interestPaid)) ]
+                [ dt [] [ str "Monthly budget" ]
+                  dd [] [ str (fmtCurrency model.monthlyBudget) ]
+                  dt [] [ str "Investment after 12 months" ]
+                  dd [] [ str (fmtCurrency model.stats.totalInvestment) ]
+                  dt [] [ str "Balance after 12 months" ]
+                  dd [] [ str (fmtCurrency model.stats.totalBalance) ]
+                  dt [] [ str "Interest paid after 12 months" ]
+                  dd [] [ str (fmtCurrency model.stats.interestPaid) ]
+                  dt [] [ str "Total AER" ]
+                  dd [] [ str (sprintf "%.2f%%" (model.totalAer * 100m)) ] ]
+              br []
+            ]
+          Container.container [ Container.IsFluid ]
+            [ for account in model.accounts ->
+              Card.card []
+                [ Card.header []
+                    [ Card.Header.title [ Card.Header.Title.IsCentered ]
+                        [ str (sprintf "%s: %s (AER %.2f%%)" account.account.bank account.account.name (account.account.aer * 100m)) ] ]
+                  Card.content []
+                    [ Content.content []
+                           [ dl []
+                            [ dt [] [ str "Monthly investment" ]
+                              dd [] [ str (fmtCurrency account.monthlyInvestment) ]
+                              dt [] [ str "Investment after 12 months" ]
+                              dd [] [ str (fmtCurrency account.stats.totalInvestment) ]
+                              dt [] [ str "Balance after 12 months" ]
+                              dd [] [ str (fmtCurrency account.stats.totalBalance) ]
+                              dt [] [ str "Interest paid after 12 months" ]
+                              dd [] [ str (fmtCurrency account.stats.interestPaid) ] ] ] ]
                 ]
             ]
         ]
-    ]
+      ]
 
 
 // APP
 
 Program.mkProgram init update view
+// |> Program.withHMR
 |> Program.withReact "monthly-savings-juggler"
 |> Program.withConsoleTrace
 |> Program.run
