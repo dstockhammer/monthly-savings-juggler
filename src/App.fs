@@ -141,8 +141,8 @@ let intro model dispatch =
           str "savings accounts on the 1st of each month and b) ensure that you meet the eligibility criteria for the "
           str "respective current account." ]
       p [ ClassName "intro" ]
-        [ str "This calculater helps you make the most out of your monthly savings budget. It allocates your budget into "
-          str "different acconts, prioritising account with the highest interest and minimising the total number of accounts "
+        [ str "This calculator helps you make the most out of your monthly savings budget. It allocates your budget into "
+          str "different accounts, prioritising account with the highest interest and minimising the total number of accounts "
           str "required. You still have to ensure that you satisfy the requirements for the free current account." ]
       p [ ClassName "intro" ]
         [ str "In a future version, the calculator may help you with those requirements as well and may spit out full "
@@ -154,7 +154,7 @@ let controls model dispatch =
     [ Container.IsFluid ]
     [ Heading.h4 [] [ str "Monthly budget" ]
       div []
-        [ str "Move the slider to ajust how much money you want to deposit "
+        [ str "Move the slider to adjust how much money you want to deposit "
           strong [] [ str "each month" ]
           str ". "
           str "The maximum monthly deposit across all accounts is currently "
@@ -310,5 +310,5 @@ let view (model:Model) dispatch =
 Program.mkProgram init update view
 // |> Program.withHMR
 |> Program.withReact "monthly-savings-juggler"
-|> Program.withConsoleTrace
+// |> Program.withConsoleTrace
 |> Program.run
