@@ -26,17 +26,21 @@ type AccountWithStats =
     monthlyDeposit: decimal
     stats: Stats12Mo }
 
-
 let pickAccounts availableAccounts budget =
   let f (remainingAllowance: decimal) (account: Account) =
-    let accountBudget = min remainingAllowance (snd account.monthlyAllowance)
-    let uninvestedBudget = remainingAllowance - accountBudget
-    (accountBudget, account), uninvestedBudget
+    if fst account.monthlyAllowance < remainingAllowance then
+      let accountBudget = min remainingAllowance (snd account.monthlyAllowance)
+      let uninvestedBudget = remainingAllowance - accountBudget
+      (accountBudget, account), uninvestedBudget
+    else
+      (0m, account), remainingAllowance
 
   availableAccounts
-  |> Seq.sortByDescending (fun x -> x.aer, (snd x.monthlyAllowance))
+  |> Seq.sortByDescending (fun x -> x.aer, snd x.monthlyAllowance)
   |> Seq.mapFold f budget
-  |> fun x -> Seq.filter (fun x -> fst x > 0m) (fst x), snd x
+  |> fun x ->
+    Seq.filter (fun accountWithDeposit -> fst accountWithDeposit > 0m) (fst x),
+    snd x
 
 let calculateStats accountWithDeposit =
   let monthlyDeposit, account = accountWithDeposit

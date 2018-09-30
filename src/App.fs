@@ -119,6 +119,8 @@ let yearlyStats model dispatch =
       dl []
         [ dt [] [ str "Monthly budget" ]
           dd [] [ str (fmtCurrency model.monthlyBudget) ]
+          dt [] [ str "Uninvested budget" ]
+          dd [] [ str (fmtCurrency model.uninvestedBudget) ]
           dt [] [ str "Deposited after 12 months" ]
           dd [] [ str (fmtCurrency model.stats.totalDeposit) ]
           dt [] [ str "Balance after 12 months" ]
@@ -152,6 +154,10 @@ let selectedAccounts model dispatch =
                         [ dl []
                             [ dt [] [ str "Monthly investment" ]
                               dd [] [ str (fmtCurrency account.monthlyDeposit) ]
+                              dt [] [ str "Limits" ]
+                              dd [] [ str (fmtCurrency (fst account.account.monthlyAllowance))
+                                      str " - "
+                                      str (fmtCurrency (snd account.account.monthlyAllowance)) ]
                               dt [] [ str "Deposited after 12 months" ]
                               dd [] [ str (fmtCurrency account.stats.totalDeposit) ]
                               dt [] [ str "Balance after 12 months" ]
