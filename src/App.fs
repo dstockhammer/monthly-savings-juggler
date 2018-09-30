@@ -27,17 +27,27 @@ type Msg =
 
 // STATE
 
+let highestAer =
+  AvailableAccounts.List
+  |> Seq.maxBy (fun x -> x.aer)
+  |> fun x -> x.aer
+
 let maxDeposit =
   AvailableAccounts.List
-  |> Seq.fold (fun sum a -> sum + (snd a.monthlyAllowance)) 0m
+  |> Seq.sumBy (fun x -> snd x.monthlyAllowance)
+
+let maxDepositForHighestAer =
+  AvailableAccounts.List
+  |> Seq.filter (fun x -> x.aer = highestAer)
+  |> Seq.sumBy (fun x -> snd x.monthlyAllowance)
 
 let init() =
   { monthlyBudget = 0m
     uninvestedBudget = 0m
     accounts = Seq.empty
-    stats = Stats12Mo.zero
+    stats = Stats12Mo.Zero
     totalAer = 0m },
-  Cmd.ofMsg (ChangeMonthlyBudget (maxDeposit / 2m))
+  Cmd.ofMsg (ChangeMonthlyBudget 500m)
 
 let update (msg:Msg) (model:Model) =
   match msg with
@@ -47,7 +57,8 @@ let update (msg:Msg) (model:Model) =
     { model with uninvestedBudget = uninvestedBudget }, Cmd.ofMsg (CalculateStats selectedAccounts)
   | CalculateStats accountWithInvestment ->
     let accounts = accountWithInvestment |> Seq.map calculateStats
-    let stats = accounts |> Seq.fold (fun stats account -> stats + account.stats) Stats12Mo.zero
+    let stats = accounts |> Seq.fold (fun stats account -> stats + account.stats) Stats12Mo.Zero
+    // let stats = accounts |> Seq.sumBy (fun x -> x.stats) // todo: should work, but doesn't
     let totalAer = stats.interestPaid / stats.totalDeposit
     { model with accounts = accounts; stats = stats; totalAer = totalAer}, Cmd.none
 
@@ -72,18 +83,31 @@ let header model dispatch =
 let controls model dispatch =
   Container.container
     [ Container.IsFluid ]
-    [ //Heading.h3 [] [ str "Monthly budget" ]
+    [ Heading.h4 [] [ str "Monthly budget" ]
       div []
-        [ str "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus
-              , nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio
-              , sollicitudin vel erat vel, interdum mattis neque." ]
+        [ str "Move the slider to ajust how much money you want to deposit "
+          strong [] [ str "each month" ]
+          str ". "
+          str "The maximum monthly deposit across all accounts is currently "
+          Button.span
+            [ Button.OnClick (fun _ -> maxDeposit |> ChangeMonthlyBudget |> dispatch)
+              Button.Size IsSmall ]
+            [ str (fmtCurrency maxDeposit) ]
+          str ". "
+          str "The breakpoint for getting the highest AER of "
+          strong [] [ str (sprintf "%.2f%%" (highestAer * 100m)) ]
+          str " is "
+          Button.span
+            [ Button.OnClick (fun _ -> maxDepositForHighestAer |> ChangeMonthlyBudget |> dispatch)
+              Button.Size IsSmall ]
+            [ str (fmtCurrency maxDepositForHighestAer) ]
+          str ". " ]
       div []
         [ Slider.slider [ Slider.IsFullWidth
                           Slider.Step 1.0
                           Slider.Min 1.0
                           Slider.Max (float maxDeposit)
-                          Slider.DefaultValue (float model.monthlyBudget)
+                          Slider.Value (float model.monthlyBudget)
                           Slider.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
     ]
 
@@ -91,7 +115,7 @@ let controls model dispatch =
 let yearlyStats model dispatch =
   Container.container
     [ Container.IsFluid ]
-    [ //Heading.h3 [] [ str "Balance after 12 months" ]
+    [ Heading.h4 [] [ str "Balance after 12 months" ]
       dl []
         [ dt [] [ str "Monthly budget" ]
           dd [] [ str (fmtCurrency model.monthlyBudget) ]

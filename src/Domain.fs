@@ -18,7 +18,7 @@ type Stats12Mo =
       totalBalance = a.totalBalance + b.totalBalance
       totalDeposit = a.totalDeposit + b.totalDeposit }
 
-  static member zero =
+  static member Zero =
     { totalDeposit = 0m; totalBalance = 0m; interestPaid = 0m }
 
 type AccountWithStats =
