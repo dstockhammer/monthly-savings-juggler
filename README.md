@@ -1,10 +1,6 @@
 # Monthly Savings Juggler
 
-Many (most?) banks in the UK offer “regular” monthly savings accounts that are available to customers who also hold a current account with that bank. The interest rates are decent essentially risk free (see FCA deposit and savings protection). There is a monthly allowance that varies between banks, but it’s usually around £300. In order to save more than that, you have to set up multiple accounts with the different banks and set up standing orders in a way that you a) deposit funds into the correct savings accounts on the 1st of each month and b) ensure that you meet the eligibility criteria for the respective current account.
-
-This calculater helps you make the most out of your monthly savings budget. It allocates your budget into different acconts, prioritising account with the highest interest and minimising the total number of accounts required. You still have to ensure that you satisfy the requirements for the free current account.
-
-In a future version, the calculator may help you with those requirements as well and may spit out full instructions to create all standing orders and/or direct debits. For now, numbers and stats is all you get.
+Check out the "What is this?" section [on the website](https://dstockhammer.github.io/monthly-savings-juggler/) for details!
 
 ## Requirements
 
