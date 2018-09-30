@@ -62,7 +62,7 @@ let assignDeposits availableAccounts budget =
 let calculateStats accountWithDeposit =
   let monthlyDeposit, account = accountWithDeposit
   let totalDeposit = monthlyDeposit * 12m
-  let interestPaid = totalDeposit * account.aer
+  let interestPaid = [1m..12m] |> Seq.sumBy (fun month -> monthlyDeposit * (account.aer * (month / 12m)))
   { account = account
     monthlyDeposit = monthlyDeposit
     stats =
@@ -207,16 +207,18 @@ let yearlyStats model dispatch =
     [ Container.IsFluid ]
     [ Heading.h4 [] [ str "Stats" ]
       dl []
-        [ dt [] [ str "Uninvested budget" ]
-          dd [] [ str (fmtCurrency model.uninvestedBudget) ]
-          dt [] [ str "Deposited after 12 months" ]
+        [ dt [] [ str "Deposited after 12 months" ]
           dd [] [ str (fmtCurrency model.stats.totalDeposit) ]
           dt [] [ str "Balance after 12 months" ]
           dd [] [ str (fmtCurrency model.stats.totalBalance) ]
           dt [] [ str "Interest paid after 12 months" ]
           dd [] [ str (fmtCurrency model.stats.interestPaid) ]
-          dt [] [ str "Total AER" ]
-          dd [] [ str (sprintf "%.2f%%" (model.totalAer * 100m)) ] ]
+          dt [] [ str "Uninvested budget" ]
+          dd [] [ str (fmtCurrency model.uninvestedBudget) ]
+          // todo: taking this out for now as I don't think this calculation makes sense?
+          // dt [] [ str "Total AER" ]
+          // dd [] [ str (sprintf "%.2f%%" (model.totalAer * 100m)) ]
+        ]
       br []
     ]
 
