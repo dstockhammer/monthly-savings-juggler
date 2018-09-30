@@ -29,7 +29,7 @@ module.exports = {
     },
   },
   entry: {
-    app: ["./src/App.fsproj"],
+    app: ["./src/MonthlySavingsJuggler.fsproj"],
     style: ["./src/scss/main.scss"]
   },
   output: {

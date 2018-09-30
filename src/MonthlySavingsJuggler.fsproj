@@ -3,7 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Domain.fs" />
     <Compile Include="Accounts.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
