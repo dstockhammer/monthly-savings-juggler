@@ -3,7 +3,7 @@ var isProduction = !process.argv.find(v => v.indexOf("webpack-dev-server") !== -
 var path = require("path");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
-// var MiniCssExtractPlugin = require("mini-css-extract-plugin");
+var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 var commonPlugins = [
   new HtmlWebpackPlugin({
@@ -38,7 +38,7 @@ module.exports = {
   },
   plugins: isProduction ?
     commonPlugins.concat([
-      // new MiniCssExtractPlugin({ filename: "style.css" }),
+      new MiniCssExtractPlugin({ filename: "style.css" }),
       new CopyWebpackPlugin([{ from: "./assets" }]),
     ])
     : commonPlugins.concat([
@@ -61,7 +61,7 @@ module.exports = {
       {
         test: /\.(sass|scss|css)$/,
         use: [
-          "style-loader",
+          isProduction ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
           "sass-loader",
         ],
