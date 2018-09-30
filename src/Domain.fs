@@ -9,21 +9,21 @@ type Account =
     requirements: string }
 
 type Stats12Mo =
-  { totalInvestment: decimal
+  { totalDeposit: decimal
     totalBalance: decimal
     interestPaid: decimal }
 
   static member (+) (a, b) =
     { interestPaid = a.interestPaid + b.interestPaid
       totalBalance = a.totalBalance + b.totalBalance
-      totalInvestment = a.totalInvestment + b.totalInvestment }
+      totalDeposit = a.totalDeposit + b.totalDeposit }
 
   static member zero =
-    { totalInvestment = 0m; totalBalance = 0m; interestPaid = 0m }
+    { totalDeposit = 0m; totalBalance = 0m; interestPaid = 0m }
 
 type AccountWithStats =
   { account: Account
-    monthlyInvestment: decimal
+    monthlyDeposit: decimal
     stats: Stats12Mo }
 
 
@@ -34,17 +34,17 @@ let pickAccounts availableAccounts budget =
     (accountBudget, account), uninvestedBudget
 
   availableAccounts
-  |> Seq.sortByDescending (fun x -> x.aer)
+  |> Seq.sortByDescending (fun x -> x.aer, (snd x.monthlyAllowance))
   |> Seq.mapFold f budget
   |> fun x -> Seq.filter (fun x -> fst x > 0m) (fst x), snd x
 
-let calculateStats accountWithInvestment =
-  let monthlyInvestment, account = accountWithInvestment
-  let totalInvestment = monthlyInvestment * 12m
-  let interestPaid = totalInvestment * account.aer
+let calculateStats accountWithDeposit =
+  let monthlyDeposit, account = accountWithDeposit
+  let totalDeposit = monthlyDeposit * 12m
+  let interestPaid = totalDeposit * account.aer
   { account = account
-    monthlyInvestment = monthlyInvestment
+    monthlyDeposit = monthlyDeposit
     stats =
-      { totalInvestment = totalInvestment
-        totalBalance = totalInvestment + interestPaid
+      { totalDeposit = totalDeposit
+        totalBalance = totalDeposit + interestPaid
         interestPaid = interestPaid } }

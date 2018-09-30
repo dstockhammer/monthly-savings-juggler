@@ -7,24 +7,17 @@
 // // Links
 // $link-hover: #00D1B2;
 
-// $fa-font-path: "./../../node_modules/font-awesome/fonts/";
-// @import './../../node_modules/font-awesome/scss/font-awesome.scss';
-
 @import './../../node_modules/bulma/bulma.sass';
 @import './../../node_modules/bulma-slider/dist/css/bulma-slider.sass';
 
 dl {
-  width: 26rem;
-
   dt {
     float: left;
     clear: left;
-    width: 18rem;
     &::after {
       content: ":";
     }
   }
-
   dd {
     font-weight: bold;
     text-align: right;
