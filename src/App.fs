@@ -135,16 +135,17 @@ let intro model dispatch =
     [ Heading.h3 [] [ str "What is this?" ]
       p [ ClassName "intro" ]
         [ str "Many (most?) banks in the UK offer “regular” monthly savings accounts that are available to customers "
-          str "who also hold a current account with that bank. The interest rates are decent essentially risk free "
-          str "(see FCA deposit and savings protection). There is a monthly allowance that varies between banks, "
+          str "who also hold a current account with that bank. The interest rates are decent and it’s essentially risk free (see "
+          a [ Href "https://www.fca.org.uk/consumers/deposit-savings-protection" ] [ str "FCA deposit and savings protection"]
+          str "). There is a monthly allowance that varies between banks, "
           str "but it’s usually around £300. In order to save more than that, you have to set up multiple accounts "
           str "with the different banks and set up standing orders in a way that you a) deposit funds into the correct "
           str "savings accounts on the 1st of each month and b) ensure that you meet the eligibility criteria for the "
           str "respective current account." ]
       p [ ClassName "intro" ]
         [ str "This calculator helps you make the most out of your monthly savings budget. It allocates your budget into "
-          str "different accounts, prioritising account with the highest interest and minimising the total number of accounts "
-          str "required. You still have to ensure that you satisfy the requirements for the free current account." ]
+          str "different accounts, prioritising accounts with the highest interest rate and minimising the total number of accounts "
+          str "required. You still have to ensure that you satisfy the requirements for the free current accounts." ]
       p [ ClassName "intro" ]
         [ str "In a future version, the calculator may help you with those requirements as well and may spit out full "
           str "instructions to create all standing orders and/or direct debits. For now, numbers and stats is all you get." ]
