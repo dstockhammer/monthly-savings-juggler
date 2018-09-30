@@ -95,7 +95,8 @@ let init() =
 
 let update (msg:Msg) (model:Model) =
   match msg with
-  | ChangeMonthlyBudget monthlyBudget -> { model with monthlyBudget = monthlyBudget }, Cmd.ofMsg PickAccounts
+  | ChangeMonthlyBudget monthlyBudget ->
+    { model with monthlyBudget = monthlyBudget |> min maxDeposit |> max 1m }, Cmd.ofMsg PickAccounts
   | PickAccounts ->
     let accountsWithDeposits, uninvestedBudget = assignDeposits AvailableAccounts.List model.monthlyBudget
     { model with uninvestedBudget = uninvestedBudget
@@ -194,6 +195,7 @@ let controls model dispatch =
                                 [ str "£" ] ]
                           Control.p [ Control.IsExpanded ]
                             [ Input.number [ Input.Value (string model.monthlyBudget)
+                                             Input.Props [ Step 1; Min 1; Max maxDeposit ]
                                              Input.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ] ] ] ]
             ]
         ]
