@@ -172,12 +172,31 @@ let controls model dispatch =
             [ str (fmtCurrency maxDepositForHighestAer) ]
           str ". " ]
       div []
-        [ Slider.slider [ Slider.IsFullWidth
-                          Slider.Step 1.0
-                          Slider.Min 1.0
-                          Slider.Max (float maxDeposit)
-                          Slider.Value (float model.monthlyBudget)
-                          Slider.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
+        [ Columns.columns []
+            [ Column.column
+                [ Column.Width (Screen.FullHD, Column.IsThreeQuarters)
+                  Column.Width (Screen.Desktop, Column.IsHalf)
+                  Column.Width (Screen.Mobile, Column.IsFull) ]
+                [ Slider.slider [ Slider.IsFullWidth
+                                  Slider.Step 1.0
+                                  Slider.Min 1.0
+                                  Slider.Max (float maxDeposit)
+                                  Slider.Value (float model.monthlyBudget)
+                                  Slider.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ]
+              Column.column
+                [ Column.Width (Screen.FullHD, Column.IsOneQuarter)
+                  Column.Width (Screen.Desktop, Column.IsHalf)
+                  Column.Width (Screen.Mobile, Column.IsFull) ]
+                [ Field.div []
+                    [ Field.div [ Field.HasAddons ]
+                        [ Control.p []
+                            [ Button.button [ Button.IsStatic true ]
+                                [ str "£" ] ]
+                          Control.p [ Control.IsExpanded ]
+                            [ Input.number [ Input.Value (string model.monthlyBudget)
+                                             Input.OnChange (fun ev -> decimal(ev.Value) |> ChangeMonthlyBudget |> dispatch) ] ] ] ] ]
+            ]
+        ]
     ]
 
 let yearlyStats model dispatch =
@@ -185,9 +204,7 @@ let yearlyStats model dispatch =
     [ Container.IsFluid ]
     [ Heading.h4 [] [ str "Stats" ]
       dl []
-        [ dt [] [ str "Monthly budget" ]
-          dd [] [ str (fmtCurrency model.monthlyBudget) ]
-          dt [] [ str "Uninvested budget" ]
+        [ dt [] [ str "Uninvested budget" ]
           dd [] [ str (fmtCurrency model.uninvestedBudget) ]
           dt [] [ str "Deposited after 12 months" ]
           dd [] [ str (fmtCurrency model.stats.totalDeposit) ]
