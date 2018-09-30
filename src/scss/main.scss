@@ -24,6 +24,9 @@ dl {
   }
 }
 
-.card-footer-item {
-  font-weight: bold;
+p.intro {
+  padding-bottom: 0.75rem;
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 }
